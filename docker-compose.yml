@@ -1,0 +1,59 @@
+version: '3.3'
+
+services:
+
+  node-test:
+    container_name: "node-test"
+    image: node:18.20-alpine
+    restart: always
+    stdin_open: true ## prevent that stop container
+    tty: true ## prevent that stop container
+    ports:
+      - 5001:3001
+    working_dir: "/app/"
+    volumes:
+      - type: bind
+        source: .
+        target: /app/
+
+  postgres:
+    container_name: "postgres"
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=my_store
+      - POSTGRES_USER=Sara
+      - POSTGRES_PASSWORD=admin123
+      - PGHOST=0.0.0.0
+    ports:
+      - 54032:5432
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: "pgadmin"
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@mail.com
+      - PGADMIN_DEFAULT_PASSWORD=root
+    ports:
+      - 50050:80
+
+  mysql:
+    image: mysql:5
+    environment:
+      - MYSQL_DATABASE=my_store
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=admin123
+      - MYSQL_PORT=3306
+    ports:
+      - 33006:3306
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+
+  # phpmyadmin:
+  #   image: phpmyadmin/phpmyadmin
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=admin123
+  #     - PMA_HOST=mysql
+  #   ports:
+  #     - 33007:3307
